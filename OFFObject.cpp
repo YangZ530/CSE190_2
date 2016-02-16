@@ -30,6 +30,8 @@ OFFObject::OFFObject()
 	this->face_normals = new std::vector<Vector3*>();
 	this->faces = new std::vector<_Face>();
 	this->face_adjacency = new vector<vector<int>*>();
+
+	this->edges = new unordered_map<size_t, _Edge>();
 }
 
 OFFObject::OFFObject(string filename) {
@@ -39,6 +41,8 @@ OFFObject::OFFObject(string filename) {
 	this->faces = new std::vector<_Face>();
 	this->face_adjacency = new vector<vector<int>*>(); 
 	this->face_normals = new std::vector<Vector3*>();
+
+	this->edges = new unordered_map<size_t, _Edge>();
 
 	parse(filename);
 }
@@ -137,6 +141,7 @@ void OFFObject::parse(string& filename) {
 	calc_face_normals();
 	calc_face_adjacency();
 	calc_vertex_normals();
+	calc_edges();
 
 	return;
 }
@@ -179,6 +184,27 @@ void OFFObject::calc_vertex_normals() {
 	}
 
 	cout << "Done calculating vertex normals" << endl;
+}
+
+void OFFObject::calc_edges() {
+	cout << "Building edges" << endl;
+
+	_Edge e0, e1, e2;
+
+	for each(_Face f in *faces) {
+		e0.v0 = f.vs[0];
+		e0.v1 = f.vs[1];
+		e1.v0 = f.vs[1];
+		e1.v1 = f.vs[2];
+		e2.v0 = f.vs[0];
+		e2.v1 = f.vs[2];
+
+		edges->insert(make_pair(hash<_Edge>{}(e0), e0));
+		edges->insert(make_pair(hash<_Edge>{}(e1), e1));
+		edges->insert(make_pair(hash<_Edge>{}(e2), e2));
+	}
+
+	cout << "Done building edges" << endl;
 }
 
 std::vector<std::string>& OFFObject::split(const std::string &s, char delim, std::vector<std::string> &elems)
