@@ -192,12 +192,12 @@ void OFFObject::calc_edges() {
 	_Edge e0, e1, e2;
 
 	for each(_Face f in *faces) {
-		e0.v0 = f.vs[0];
-		e0.v1 = f.vs[1];
-		e1.v0 = f.vs[1];
-		e1.v1 = f.vs[2];
-		e2.v0 = f.vs[0];
-		e2.v1 = f.vs[2];
+		e0.v0 = std::fminf(f.vs[0], f.vs[1]);
+		e0.v1 = std::fmaxf(f.vs[0], f.vs[1]);
+		e1.v0 = std::fminf(f.vs[1], f.vs[2]);
+		e1.v1 = std::fmaxf(f.vs[1], f.vs[2]);
+		e2.v0 = std::fminf(f.vs[0], f.vs[2]);
+		e2.v1 = std::fmaxf(f.vs[0], f.vs[2]);
 
 		edges->insert(make_pair(hash<_Edge>{}(e0), e0));
 		edges->insert(make_pair(hash<_Edge>{}(e1), e1));
