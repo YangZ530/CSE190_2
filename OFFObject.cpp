@@ -31,7 +31,11 @@ OFFObject::OFFObject()
 	this->faces = new std::vector<_Face>();
 	this->face_adjacency = new vector<vector<int>*>();
 
-	this->edges = new unordered_map<size_t, _Edge>();
+	this->edges = new vector<_Edge>();
+	this->edge_adjacency = new vector<vector<int>*>();
+
+	this->face_quadrics = new vector<Quadric>();
+	this->vertex_quadrics = new vector<Quadric>();
 }
 
 OFFObject::OFFObject(string filename) {
@@ -42,7 +46,11 @@ OFFObject::OFFObject(string filename) {
 	this->face_adjacency = new vector<vector<int>*>(); 
 	this->face_normals = new std::vector<Vector3*>();
 
-	this->edges = new unordered_map<size_t, _Edge>();
+	this->edges = new vector<_Edge>();
+	this->edge_adjacency = new vector<vector<int>*>();
+
+	this->face_quadrics = new vector<Quadric>();
+	this->vertex_quadrics = new vector<Quadric>();
 
 	parse(filename);
 }
@@ -50,6 +58,14 @@ OFFObject::OFFObject(string filename) {
 
 OFFObject::~OFFObject()
 {
+	vector<Vector3*>::iterator iter;
+	vector<Vector3*>::iterator end;
+	deleteVector(vertices);
+	deleteVector(normals);
+	deleteVector(texcoords);
+	deleteVector(face_normals);
+
+	delete faces;
 }
 
 void OFFObject::draw(DrawData& data) {
@@ -76,6 +92,9 @@ void OFFObject::draw(DrawData& data) {
 		for (int i = 0; i < 3; i++) {
 			Vector3 n = *normals->at(f.vs[i]);
 			Vector3 v = *vertices->at(f.vs[i]);
+			//glColor3f((n[0]+1)/2.0, (n[1]+1)/2.0, (n[2]+1)/2.0);
+			float random = (double)rand() / RAND_MAX;
+			glColor3f(random, random, random);
 			glNormal3f(n[0], n[1], n[2]);
 			glVertex3f(v[0], v[1], v[2]);
 		}
@@ -120,6 +139,7 @@ void OFFObject::parse(string& filename) {
 			float z = std::stof(tokens.at(2));
 			vertices->push_back(new Vector3(x, y, z));
 			face_adjacency->push_back(new vector<int>());
+			edge_adjacency->push_back(new vector<int>());
 			lnCount++;
 			continue;
 		}
@@ -141,7 +161,10 @@ void OFFObject::parse(string& filename) {
 	calc_face_normals();
 	calc_face_adjacency();
 	calc_vertex_normals();
+	fundamental_quadrics();
+	calc_vertex_quadrics();
 	calc_edges();
+	calc_edge_adjacency();
 
 	return;
 }
@@ -152,7 +175,6 @@ void OFFObject::calc_face_normals() {
 	for each(_Face f in *faces) {
 		Vector3 normal = (*vertices->at(f.vs[0]) - *vertices->at(f.vs[1])).cross(*vertices->at(f.vs[2]) - *vertices->at(f.vs[1]));
 		face_normals->push_back(new Vector3(normal.normalize().negate()));
-
 	}
 
 	cout << "Done calculating face normals" << endl;
@@ -189,6 +211,7 @@ void OFFObject::calc_vertex_normals() {
 void OFFObject::calc_edges() {
 	cout << "Building edges" << endl;
 
+	unordered_map<size_t,_Edge> map;
 	_Edge e0, e1, e2;
 
 	for each(_Face f in *faces) {
@@ -199,12 +222,52 @@ void OFFObject::calc_edges() {
 		e2.v0 = std::fminf(f.vs[0], f.vs[2]);
 		e2.v1 = std::fmaxf(f.vs[0], f.vs[2]);
 
-		edges->insert(make_pair(hash<_Edge>{}(e0), e0));
-		edges->insert(make_pair(hash<_Edge>{}(e1), e1));
-		edges->insert(make_pair(hash<_Edge>{}(e2), e2));
+		map.insert(make_pair(hash<_Edge>{}(e0), e0));
+		map.insert(make_pair(hash<_Edge>{}(e1), e1));
+		map.insert(make_pair(hash<_Edge>{}(e2), e2));
+	}
+
+	unordered_map<rsize_t, _Edge>::iterator it;
+	for (it = map.begin(); it != map.end(); it++) {
+		edges->push_back(it->second);
 	}
 
 	cout << "Done building edges" << endl;
+}
+
+void OFFObject::calc_edge_adjacency() {
+	for (int i = 0; i < edges->size; i++) {
+		_Edge e = edges->at(i);
+		edge_adjacency->at(e.v0)->push_back(i);
+		edge_adjacency->at(e.v1)->push_back(i);
+	}
+}
+
+void OFFObject::fundamental_quadrics() {
+	for (int i = 0; i < faces->size; i++) {
+		Vector3 a = *vertices->at(faces->at(i).vs[0]);
+		Vector3 n = *face_normals->at(i);
+		float d = -(a.dot(n));
+		face_quadrics->push_back(calc_quadric(n[0], n[1], n[2], d));
+	}
+}
+
+Quadric calc_quadric(float a, float b, float c, float d) {
+	return Quadric{ a*a, a*b, a*c, a*d,
+		b*b, b*c, b*d,
+		c*c, c*d,
+		d*d };
+}
+
+void OFFObject::calc_vertex_quadrics() {
+	for (int i = 0; i < vertices->size; i++) {
+		vector<int>::iterator it;
+		Quadric q;
+		for (it = face_adjacency->at(i)->begin(); it < face_adjacency->at(i)->end(); it++) {
+			q = q.add(face_quadrics->at(*it));
+		}
+		vertex_quadrics->push_back(q);
+	}
 }
 
 std::vector<std::string>& OFFObject::split(const std::string &s, char delim, std::vector<std::string> &elems)

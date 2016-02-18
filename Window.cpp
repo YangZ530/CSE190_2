@@ -106,59 +106,7 @@ void Window::displayCallback()
 
 //TODO: Keyboard callbacks!
 void Window::keyboardCallback(unsigned char key, int x, int y){
-	switch (key){
-	case't':
-		// use a static var to control idle status
-		spin_flag = -spin_flag;
-		// get the translation column from toWorld and convert into Vector3 coordinates
-		// could put into a seperate func
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'x':
-		Globals::cube.xMove(-0.1);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'X':
-		Globals::cube.xMove(0.1);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case 'y':
-		Globals::cube.yMove(-0.1);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'Y':
-		Globals::cube.yMove(0.1);		
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'z':
-		Globals::cube.zMove(-0.1);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'Z':
-		Globals::cube.zMove(0.1);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'r':
-		initialize();
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case's':
-		Globals::cube.scale(0.75);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'S':
-		Globals::cube.scale(1.25);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'o':
-		Globals::cube.zRotate(0.05);
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	case'O':
-		Globals::cube.zRotate(-0.05);	
-		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
-		break;
-	}
+
 }
 
 //TODO: Function Key callbacks!

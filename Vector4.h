@@ -17,12 +17,14 @@ public:
     Vector4();
     Vector4(float, float, float);
     Vector4(float, float, float, float);
+	Vector4(Vector3);
     
     float* ptr();
     float& operator [] (int);
     
     void set(float,float,float,float);
-    
+
+	float transposeMulti(Vector4);
     
     Vector4 add(Vector4&);
     Vector4 operator + (Vector4);
