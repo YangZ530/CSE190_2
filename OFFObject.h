@@ -37,6 +37,11 @@ struct Quadric {
 		return Quadric(q11 + q.q11, q12 + q.q12, q13 + q.q13, q14 + q.q14,
 			q22 + q.q22, q23 + q.q23, q24 + q.q24, q33 + q.q33, q34 + q.q34, q44 + q.q44);
 	}
+	float error(float x, float y, float z) {
+		return q11*x*x + q12 * x * y *2.0 + q13*x*z*2.0 + q14*x * 2 +
+			q22*y*y + q23*y*z*2.0 + q24*2.0 +
+			q33*z*z + q34*z*2.0 + q44;
+	}
 };
 
 namespace std {
@@ -79,6 +84,10 @@ protected:
 	void fundamental_quadrics();
 	void calc_vertex_quadrics();
 
+	void calc_edge_costs();
+	float edge_cost(_Edge);
+
+	Quadric calc_quadric(float, float, float, float);
 	std::vector<std::string>& split(const std::string&, char, std::vector<std::string>&);
 	std::vector<std::string> split(const std::string&, char);
 

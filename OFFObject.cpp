@@ -65,7 +65,13 @@ OFFObject::~OFFObject()
 	deleteVector(texcoords);
 	deleteVector(face_normals);
 
+	delete face_adjacency;
+	delete edge_adjacency;
+
 	delete faces;
+	delete edges;
+	delete face_quadrics;
+	delete vertex_quadrics;
 }
 
 void OFFObject::draw(DrawData& data) {
@@ -165,6 +171,7 @@ void OFFObject::parse(string& filename) {
 	calc_vertex_quadrics();
 	calc_edges();
 	calc_edge_adjacency();
+	calc_edge_costs();
 
 	return;
 }
@@ -236,7 +243,7 @@ void OFFObject::calc_edges() {
 }
 
 void OFFObject::calc_edge_adjacency() {
-	for (int i = 0; i < edges->size; i++) {
+	for (int i = 0; i < edges->size(); i++) {
 		_Edge e = edges->at(i);
 		edge_adjacency->at(e.v0)->push_back(i);
 		edge_adjacency->at(e.v1)->push_back(i);
@@ -244,7 +251,7 @@ void OFFObject::calc_edge_adjacency() {
 }
 
 void OFFObject::fundamental_quadrics() {
-	for (int i = 0; i < faces->size; i++) {
+	for (int i = 0; i < faces->size(); i++) {
 		Vector3 a = *vertices->at(faces->at(i).vs[0]);
 		Vector3 n = *face_normals->at(i);
 		float d = -(a.dot(n));
@@ -252,7 +259,7 @@ void OFFObject::fundamental_quadrics() {
 	}
 }
 
-Quadric calc_quadric(float a, float b, float c, float d) {
+Quadric OFFObject::calc_quadric(float a, float b, float c, float d) {
 	return Quadric{ a*a, a*b, a*c, a*d,
 		b*b, b*c, b*d,
 		c*c, c*d,
@@ -260,7 +267,7 @@ Quadric calc_quadric(float a, float b, float c, float d) {
 }
 
 void OFFObject::calc_vertex_quadrics() {
-	for (int i = 0; i < vertices->size; i++) {
+	for (int i = 0; i < vertices->size(); i++) {
 		vector<int>::iterator it;
 		Quadric q;
 		for (it = face_adjacency->at(i)->begin(); it < face_adjacency->at(i)->end(); it++) {
@@ -268,6 +275,20 @@ void OFFObject::calc_vertex_quadrics() {
 		}
 		vertex_quadrics->push_back(q);
 	}
+}
+
+void OFFObject::calc_edge_costs() {
+	vector<_Edge>::iterator it;
+	for (it = edges->begin(); it != edges->end(); it++) {
+		(*it).cost = edge_cost(*it);
+	}
+}
+
+float OFFObject::edge_cost(_Edge e) {
+	Vector3 v = (*vertices->at(e.v0) + *vertices->at(e.v1))*0.5;
+	Quadric q1 = vertex_quadrics->at(e.v0);
+	Quadric q2 = vertex_quadrics->at(e.v1);
+	return q1.error(v[0], v[1], v[2]) + q2.error(v[0], v[1], v[2]);
 }
 
 std::vector<std::string>& OFFObject::split(const std::string &s, char delim, std::vector<std::string> &elems)

@@ -95,6 +95,7 @@
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DrawData.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OFFObject.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DrawData.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OFFObject.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Texture.cpp" />
