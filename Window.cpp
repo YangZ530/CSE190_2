@@ -106,12 +106,18 @@ void Window::displayCallback()
 
 //TODO: Keyboard callbacks!
 void Window::keyboardCallback(unsigned char key, int x, int y){
+	if (key == 's')
+	{
+		Globals::offObject->meshSimplify();
+	}
+	if (key == 'r')
+	{
+		Globals::offObject->progressiveMesh();
+	}
+	/*
 	switch (key){
 	case't':
-		// use a static var to control idle status
 		spin_flag = -spin_flag;
-		// get the translation column from toWorld and convert into Vector3 coordinates
-		// could put into a seperate func
 		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
 		break;
 	case'x':
@@ -159,6 +165,7 @@ void Window::keyboardCallback(unsigned char key, int x, int y){
 		(Globals::cube.Cube::getToWorld()*Vector4(0, 0, 0, 1)).toVector3().print("location:");
 		break;
 	}
+	*/
 }
 
 //TODO: Function Key callbacks!
