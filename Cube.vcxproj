@@ -14,6 +14,7 @@
     <ProjectGuid>{09A0AEEE-352C-4A0B-A28B-9A3E696E96E0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>Cube</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -50,7 +51,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\glut\Glut-3.7.6-bin</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -60,7 +62,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\glut\Glut-3.7.6-bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -93,6 +96,7 @@
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DrawData.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OFFObject.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
@@ -112,6 +116,7 @@
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DrawData.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OFFObject.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Texture.cpp" />
