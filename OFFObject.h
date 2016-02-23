@@ -81,6 +81,8 @@ protected:
 	void calc_edges();
 	void calc_edge_adjacency();
 
+	Quadric vertex_quadric(int);
+
 	void fundamental_quadrics();
 	void calc_vertex_quadrics();
 

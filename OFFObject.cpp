@@ -260,21 +260,29 @@ void OFFObject::fundamental_quadrics() {
 }
 
 Quadric OFFObject::calc_quadric(float a, float b, float c, float d) {
-	return Quadric{ a*a, a*b, a*c, a*d,
+	return Quadric(a*a, a*b, a*c, a*d,
 		b*b, b*c, b*d,
 		c*c, c*d,
-		d*d };
+		d*d);
 }
 
 void OFFObject::calc_vertex_quadrics() {
 	for (int i = 0; i < vertices->size(); i++) {
-		vector<int>::iterator it;
-		Quadric q;
-		for (it = face_adjacency->at(i)->begin(); it < face_adjacency->at(i)->end(); it++) {
-			q = q.add(face_quadrics->at(*it));
-		}
+		Quadric q = vertex_quadric(i);
 		vertex_quadrics->push_back(q);
 	}
+}
+
+Quadric OFFObject::vertex_quadric(int i) {
+	vector<int>::iterator it;
+	Vector3 a = *vertices->at(i);
+	Quadric q = Quadric();
+	for (it = face_adjacency->at(i)->begin(); it != face_adjacency->at(i)->end(); it++) {
+		Vector3 n = *face_normals->at(*it);
+		float d = -(a.dot(n));
+		q = q.add(calc_quadric(n[0], n[1], n[2], d));
+	}
+	return q;
 }
 
 void OFFObject::calc_edge_costs() {

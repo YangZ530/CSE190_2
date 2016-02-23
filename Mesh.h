@@ -8,6 +8,19 @@
 #include "Vector3.h"
 
 #include "Drawable.h"
+
+using namespace std;
+
+struct Vertex {
+	Vector3 vertex;
+	Vector3 normal;
+	vector<int> face_adj;
+	vector<int> edge_adj;
+};
+
+struct Face {
+
+};
 class Mesh :
 	public Drawable
 {
