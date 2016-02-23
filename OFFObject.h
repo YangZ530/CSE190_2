@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <stack>
+#include <algorithm>
 #include "Vector3.h"
 #include "Drawable.h"
 using namespace std;
@@ -32,8 +33,8 @@ struct Record{
 };
 
 struct Quadric {
-	float q11, q12, q13, q14,
-		q22, q23, q24, q33,
+	float q11, q12, q13, q14, 
+		q22, q23, q24, q33, 
 		q34, q44;
 	Quadric() :q11(0), q12(0), q13(0), q14(0),
 		q22(0), q23(0), q24(0),
@@ -46,6 +47,11 @@ struct Quadric {
 	Quadric add(Quadric q) {
 		return Quadric(q11 + q.q11, q12 + q.q12, q13 + q.q13, q14 + q.q14,
 			q22 + q.q22, q23 + q.q23, q24 + q.q24, q33 + q.q33, q34 + q.q34, q44 + q.q44);
+	}
+	float error(float x, float y, float z) {
+		return  q11*x*x + q12 * x * y *2.0 + q13*x*z*2.0 + q14*x * 2 +
+			q22*y*y + q23*y*z*2.0 + q24*2.0 +
+			q33*z*z + q34*z*2.0 + q44;
 	}
 };
 
@@ -81,6 +87,13 @@ protected:
 
 	std::stack<Record> records;
 
+	bool geomorph;
+	bool simplifying;
+	bool progressing;
+	Vector3 interpolatedV0;
+	Vector3 interpolatedV1;
+	Vector3 interpolatedV;
+
 	void parse(string&);
 	void calc_face_normals();
 	void calc_face_adjacency();
@@ -89,14 +102,24 @@ protected:
 	void calc_edge_adjacency();
 	Quadric calc_quadric(float a, float b, float c, float d);
 
+	bool interpolate(_Edge, bool);
 	void collapse(_Edge);
 	void restore(Record);
+	void calc_edge_costs();
+	float edge_cost(_Edge);
 
+	//Quadric calc_quadric(float, float, float, float);
 	std::vector<std::string>& split(const std::string&, char, std::vector<std::string>&);
 	std::vector<std::string> split(const std::string&, char);
 
 	void fundamental_quadrics();
-	void calc_vertex_quadrics();
+	Quadric calc_face_quadrics(int);
+	void vertices_quadrics();
+	Quadric calc_vertex_quadrics(int);
+	void calc_all_quadrics();
+	Quadric vertex_quadric(int);
+
+	_Edge nextEdge();
 
 	float randColor();
 

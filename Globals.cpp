@@ -10,3 +10,4 @@ DrawData Globals::drawData = DrawData();
 UpdateData Globals::updateData = UpdateData();
 
 OFFObject *Globals::offObject = new OFFObject("testpatch.off");
+//OFFObject *Globals::offObject = new OFFObject("teapot.off");
